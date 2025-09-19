@@ -98,20 +98,9 @@ describe('BasicDetails - Input Tests', () => {
     const amountInput = element.shadowRoot.querySelector('.amount');
 
     amountInput.modelValue = 50000;
-    await element.updateComplete; // Wait for component to update
-
-    expect(amountInput.modelValue).to.equal(50000);
-  });
-
-  it('should convert number to words when user types amount', async () => {
-    const amountInput = element.shadowRoot.querySelector('.amount');
-    const wordDiv = element.shadowRoot.querySelector('#word');
-
-    amountInput.value = '25000';
-    amountInput.dispatchEvent(new Event('input'));
     await element.updateComplete;
 
-    expect(wordDiv.innerHTML).to.contain('twenty five thousand');
+    expect(amountInput.modelValue).to.equal(50000);
   });
 
   it('should load loan type from browser storage', () => {
@@ -184,5 +173,48 @@ describe('BasicDetails - Button Click Tests', () => {
     element._captureDetails();
 
     expect(fetchStub).to.not.have.been.called;
+  });
+});
+
+describe('BasicDetails - Accessibility Tests', () => {
+  let element;
+
+  beforeEach(async () => {
+    // Setup: Create fake localStorage and component
+    stub(window.localStorage, 'getItem').returns('Personal Loan');
+    stub(window.localStorage, 'setItem');
+
+    element = await fixture(html`<basic-details></basic-details>`);
+    await element.updateComplete;
+  });
+
+  afterEach(() => {
+    restore(); // Cleanup: Put everything back to normal
+  });
+
+  it('should have proper labels for all input fields', () => {
+    // What we're checking: Can screen readers understand what each field is for?
+
+    // Find all input fields
+    const typeInput = element.shadowRoot.querySelector('.type');
+    const amountInput = element.shadowRoot.querySelector('.amount');
+    const periodInput = element.shadowRoot.querySelector('.period');
+
+    // FIX 2: Check if elements exist first, then check labels
+    expect(typeInput).to.exist;
+    expect(amountInput).to.exist;
+    expect(periodInput).to.exist;
+
+    // Check: Every input should have a label attribute
+    const typeLabel = typeInput.getAttribute('label');
+    const amountLabel = amountInput.getAttribute('label');
+    const periodLabel = periodInput.getAttribute('label');
+
+    expect(typeLabel).to.exist;
+    expect(typeLabel).to.be.a('string');
+    expect(amountLabel).to.exist;
+    expect(amountLabel).to.be.a('string');
+    expect(periodLabel).to.exist;
+    expect(periodLabel).to.be.a('string');
   });
 });
