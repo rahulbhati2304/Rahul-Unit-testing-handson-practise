@@ -12,7 +12,7 @@ import { Router } from '@vaadin/router';
 
 describe('BasicDetails - Min/Max Validation Tests', () => {
   let element;
-
+  
   // Test 1: "Does it show error for amounts less than ₹10,000?"
   // Test 2: "Does it NOT show error for amounts ≥ ₹10,000?"
   // Test 3: "Is the period slider set to 1-20 years?"
@@ -25,6 +25,7 @@ describe('BasicDetails - Min/Max Validation Tests', () => {
 
     element = await fixture(html`<basic-details></basic-details>`);
     await element.updateComplete;
+    console.log(element, 'element');
   });
 
   afterEach(() => {
