@@ -2,20 +2,20 @@ import { html, fixture, expect } from '@open-wc/testing';
 import sinon, { stub } from 'sinon';
 import { Header } from '../src/header/Header.js';
 import { localize } from '@lion/localize';
+let element;
+
+beforeEach(async () => {
+  element = await fixture(html`<loan-header></loan-header>`);
+});
+
+afterEach(() => {
+  sinon.restore();
+});
 describe('loan-header', () => {
-  let element;
-
-  beforeEach(async () => {
-    element = await fixture(html`<loan-header></loan-header>`);
+  it('should check component accessibility', () => {
+    expect(element).to.be.accessible;
   });
 
-  afterEach(() => {
-    sinon.restore();
-  });
-
-  /**
-   * Test Case 1: Component renders correctly with all elements
-   */
   it('should render the header with all required elements', async () => {
     expect(element).to.exist;
 
@@ -37,31 +37,9 @@ describe('loan-header', () => {
     expect(nlButton.textContent.trim()).to.equal('NL');
   });
 
-  /**
-   * Test Case 2: Language buttons have correct initial styling
-   */
-  it('should have correct initial styling for language buttons', async () => {
-    const enButton = element.shadowRoot.querySelector('#en-GB');
-    const nlButton = element.shadowRoot.querySelector('#nl-NL');
-
-    expect(enButton.classList.contains('en-GB')).to.be.true;
-    expect(enButton.classList.contains('bg-btn-color')).to.be.true;
-
-    expect(nlButton.classList.contains('nl-NL')).to.be.true;
-    expect(nlButton.classList.contains('btn-cursor')).to.be.true;
-  });
-
-  /**
-   * Test Case 3: Clicking EN button activates English locale
-   */
   it('should activate English when EN button is clicked', async () => {
     const enButton = element.shadowRoot.querySelector('#en-GB');
     const nlButton = element.shadowRoot.querySelector('#nl-NL');
-
-    enButton.classList.add('btn-cursor');
-    enButton.classList.remove('bg-btn-color');
-    nlButton.classList.add('bg-btn-color');
-    nlButton.classList.remove('btn-cursor');
 
     const localizeSpy = sinon.spy();
     const originalLocale = Object.getOwnPropertyDescriptor(localize, 'locale');
@@ -87,9 +65,6 @@ describe('loan-header', () => {
     }
   });
 
-  /**
-   * Test Case 5: Header has correct CSS structure and styling
-   */
   it('should have correct CSS classes and structure', async () => {
     const container = element.shadowRoot.querySelector('.container');
     expect(container).to.exist;
@@ -111,5 +86,16 @@ describe('loan-header', () => {
 
     expect(enButton).to.have.property('onclick');
     expect(nlButton).to.have.property('onclick');
+  });
+
+  it('should have correct initial styling for language buttons', async () => {
+    const enButton = element.shadowRoot.querySelector('#en-GB');
+    const nlButton = element.shadowRoot.querySelector('#nl-NL');
+
+    expect(enButton.classList.contains('en-GB')).to.be.true;
+    expect(enButton.classList.contains('bg-btn-color')).to.be.true;
+
+    expect(nlButton.classList.contains('nl-NL')).to.be.true;
+    expect(nlButton.classList.contains('btn-cursor')).to.be.true;
   });
 });

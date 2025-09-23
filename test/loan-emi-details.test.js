@@ -9,20 +9,17 @@ describe('Loan EMI details', () => {
   let localStorageStub;
 
   beforeEach(async () => {
-    // Mock localStorage
     localStorageStub = {
       getItem: sinon.stub(),
       setItem: sinon.stub(),
       removeItem: sinon.stub(),
     };
 
-    // Replace localStorage with our mock
     Object.defineProperty(window, 'localStorage', {
       value: localStorageStub,
       writable: true,
     });
 
-    // Set up mock EMI data
     const mockEmiData = {
       interestRate: 8.5,
       monthlyEMI: 5000,
@@ -42,9 +39,10 @@ describe('Loan EMI details', () => {
     sinon.restore();
   });
 
-  /**
-   * Test Case 1: Component renders correctly with all elements
-   */
+  it('should check component accessibility', () => {
+    expect(element).to.be.accessible;
+  });
+
   it('should render EMI details component with all required elements', async () => {
     expect(element).to.exist;
 
@@ -70,9 +68,6 @@ describe('Loan EMI details', () => {
     expect(continueBtn).to.exist;
   });
 
-  /**
-   * Test Case 2: Component displays EMI data from localStorage correctly
-   */
   it('should display EMI data from localStorage correctly', async () => {
     await element.updateComplete;
 
@@ -93,9 +88,6 @@ describe('Loan EMI details', () => {
     expect(spanTexts).to.include('120000'); // Total amount
   });
 
-  /**
-   * Test Case 3: Cancel button navigation works correctly
-   */
   it('should navigate to basic details when cancel button is clicked', async () => {
     const routerSpy = sinon.spy(Router, 'go');
 
@@ -108,9 +100,6 @@ describe('Loan EMI details', () => {
     expect(routerSpy.calledWith('/details')).to.be.true;
   });
 
-  /**
-   * Test Case 4: Continue button navigation works correctly
-   */
   it('should navigate to customer page when continue button is clicked', async () => {
     const routerSpy = sinon.spy(Router, 'go');
 
@@ -123,9 +112,6 @@ describe('Loan EMI details', () => {
     expect(routerSpy.calledWith('/customer')).to.be.true;
   });
 
-  /**
-   * Test Case 5: Buttons have correct styling classes
-   */
   it('should have correct CSS classes on buttons', async () => {
     const cancelBtn = element.shadowRoot.querySelector('.cancel-btn');
     const continueBtn = element.shadowRoot.querySelector('.continue-btn');

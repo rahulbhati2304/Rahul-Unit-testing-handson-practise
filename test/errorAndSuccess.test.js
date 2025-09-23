@@ -4,17 +4,16 @@ import '../src/SuccessAndError/Success.js';
 import '../src/SuccessAndError/Error.js';
 import { Router } from '@vaadin/router';
 import { localize } from '@lion/localize';
+let element;
 
+before(async () => {
+  element = await fixture(html`<loan-success></loan-success>`);
+});
 describe('Success window ', () => {
-  let element;
-
-  before(async () => {
-    element = await fixture(html`<loan-success></loan-success>`);
+  it('should check component accessibility', () => {
+    expect(element).to.be.accessible;
   });
 
-  /**
-   * Test Case 1: Component renders correctly
-   */
   it('should render the success page with all elements', async () => {
     expect(element).to.exist;
 
@@ -31,9 +30,6 @@ describe('Success window ', () => {
     expect(homeButton).to.exist;
   });
 
-  /**
-   * Test Case 2: Home button has correct styling
-   */
   it('should have correct CSS classes and styling on home button', async () => {
     const homeButton = element.shadowRoot.querySelector('lion-button');
 
@@ -46,15 +42,6 @@ describe('Success window ', () => {
 });
 
 describe('error window', () => {
-  let element;
-
-  before(async () => {
-    element = await fixture(html`<loan-error></loan-error>`);
-  });
-
-  /**
-   * Test Case 1: Component renders correctly
-   */
   it('should render the error page with all elements', async () => {
     expect(element).to.exist;
 
@@ -81,9 +68,6 @@ describe('error window', () => {
     expect(homeButton.tagName.toLowerCase()).to.equal('lion-button');
   });
 
-  /**
-   * Test Case 3: Home button navigation works
-   */
   it('should navigate to home page when home button is clicked', async () => {
     const routerSpy = sinon.spy(Router, 'go');
 
