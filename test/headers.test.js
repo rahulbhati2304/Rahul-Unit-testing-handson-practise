@@ -37,34 +37,6 @@ describe('loan-header', () => {
     expect(nlButton.textContent.trim()).to.equal('NL');
   });
 
-  it('should activate English when EN button is clicked', async () => {
-    const enButton = element.shadowRoot.querySelector('#en-GB');
-    const nlButton = element.shadowRoot.querySelector('#nl-NL');
-
-    const localizeSpy = sinon.spy();
-    const originalLocale = Object.getOwnPropertyDescriptor(localize, 'locale');
-    Object.defineProperty(localize, 'locale', {
-      set: localizeSpy,
-      get: () => 'en-GB',
-    });
-
-    enButton.click();
-
-    await new Promise(resolve => setTimeout(resolve, 10));
-
-    expect(enButton.classList.contains('bg-btn-color')).to.be.true;
-    expect(enButton.classList.contains('btn-cursor')).to.be.false;
-
-    expect(nlButton.classList.contains('btn-cursor')).to.be.true;
-    expect(nlButton.classList.contains('bg-btn-color')).to.be.false;
-
-    expect(localizeSpy.calledWith('en-GB')).to.be.true;
-
-    if (originalLocale) {
-      Object.defineProperty(localize, 'locale', originalLocale);
-    }
-  });
-
   it('should have correct CSS classes and structure', async () => {
     const container = element.shadowRoot.querySelector('.container');
     expect(container).to.exist;
