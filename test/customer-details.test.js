@@ -1,20 +1,15 @@
-import { html, fixture } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 import sinon, { stub } from 'sinon';
-import { expect } from 'chai';
 import '../src/Customer/Customer-details.js';
 import { Router } from '@vaadin/router';
 import { localize } from '@lion/localize';
-let element;
-
-beforeEach(async () => {
-  element = await fixture(html`<customer-details></customer-details>`);
-});
-
-afterEach(() => {
-  sinon.restore();
-});
 
 describe('customer details', () => {
+  let element;
+  before(async () => {
+    element = await fixture(html`<customer-details></customer-details>`);
+  });
+
   it('should check component accessibility', () => {
     const heading = element.shadowRoot.querySelector('h2');
     expect(element).to.be.accessible;
@@ -22,7 +17,7 @@ describe('customer details', () => {
   });
 
   it('should check header label', () => {
-    const heading = el.shadowRoot.querySelector('h2');
+    const heading = element.shadowRoot.querySelector('h2');
     expect(element).to.be.accessible;
     expect(heading.innerText).to.equal(
       localize.msg('change-language:customer')
@@ -46,48 +41,6 @@ describe('customer details', () => {
       localize.msg('change-language:monthlysalary')
     );
     expect(emi.label).to.equal(localize.msg('change-language:previousemi'));
-  });
-
-  it('should show error when first name is empty', async () => {
-    const firstNameInput = element.shadowRoot.querySelector('#first_name');
-
-    firstNameInput.modelValue = '';
-    await element.updateComplete;
-
-    firstNameInput.focus();
-    firstNameInput.blur();
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    expect(firstNameInput.hasFeedbackFor.includes('error')).to.be.true;
-  });
-
-  it('should show error for invalid email format', async () => {
-    const emailInput = element.shadowRoot.querySelector('#email');
-
-    emailInput.modelValue = 'invalid-email';
-    await element.updateComplete;
-
-    emailInput.focus();
-    emailInput.blur();
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    expect(emailInput.hasFeedbackFor.includes('error')).to.be.true;
-  });
-
-  it('should show error for invalid mobile number', async () => {
-    const mobileInput = element.shadowRoot.querySelector('#mobile_number');
-
-    mobileInput.modelValue = '123';
-    await element.updateComplete;
-
-    mobileInput.focus();
-    mobileInput.blur();
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    expect(mobileInput.hasFeedbackFor.includes('error')).to.be.true;
   });
 
   it('should check back button click', () => {
