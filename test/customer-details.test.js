@@ -6,22 +6,41 @@ import { localize } from '@lion/localize';
 
 describe('customer details', () => {
   let element;
-  before(async () => {
+  let fetchStub;
+
+  beforeEach(async () => {
     element = await fixture(html`<customer-details></customer-details>`);
+    fetchStub = sinon.stub(window, 'fetch');
   });
 
+  afterEach(() => {
+    if (fetchStub) {
+      fetchStub.restore();
+    }
+    sinon.restore();
+  });
   it('should check component accessibility', () => {
     const heading = element.shadowRoot.querySelector('h2');
     expect(element).to.be.accessible;
     expect(heading).to.be.accessible;
   });
 
-  it('should check header label', () => {
+  it('should render the component with correct structure', () => {
+    expect(element).to.exist;
+    expect(element.tagName.toLowerCase()).to.equal('customer-details');
+  });
+
+  it('should render heading with correct text', () => {
     const heading = element.shadowRoot.querySelector('h2');
-    expect(element).to.be.accessible;
-    expect(heading.innerText).to.equal(
+    expect(heading).to.exist;
+    expect(heading.textContent.trim()).to.equal(
       localize.msg('change-language:customer')
     );
+  });
+
+  it('should render lion-form element', () => {
+    const form = element.shadowRoot.querySelector('lion-form');
+    expect(form).to.exist;
   });
 
   it('should check inputs', () => {
@@ -45,7 +64,7 @@ describe('customer details', () => {
 
   it('should check back button click', () => {
     const spy = sinon.spy(Router, 'go');
-    element.shadowRoot.getElementById('back-btn').click();
+    element.shadowRoot.querySelector('.backbg-btn-color').click();
     expect(spy).to.have.called;
     expect(spy.firstCall.args[0]).to.equal('/emidetails');
   });
@@ -76,5 +95,37 @@ describe('customer details', () => {
     });
     expect(spy).to.have.called;
     spy.restore();
+  });
+
+  it('should validate first name field with validators', async () => {
+    const firstName = element.shadowRoot.getElementById('first_name');
+
+    firstName.modelValue = '';
+    await firstName.validate();
+    expect(firstName.hasFeedbackFor).to.include('error');
+
+    firstName.modelValue = 'Jo';
+    await firstName.validate();
+    expect(firstName.hasFeedbackFor).to.include('error');
+
+    firstName.modelValue = 'John123';
+    await firstName.validate();
+    expect(firstName.hasFeedbackFor).to.include('error');
+
+    firstName.modelValue = 'John';
+    await firstName.validate();
+    expect(firstName.hasFeedbackFor).to.not.include('error');
+  });
+
+  it('should prevent default form submission', () => {
+    const form = element.shadowRoot.querySelector('form');
+    const preventDefault = sinon.spy();
+
+    const event = new Event('submit', { bubbles: true, cancelable: true });
+    Object.defineProperty(event, 'preventDefault', { value: preventDefault });
+
+    form.dispatchEvent(event);
+
+    expect(preventDefault).to.have.been.called;
   });
 });
